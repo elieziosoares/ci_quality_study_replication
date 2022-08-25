@@ -2,7 +2,7 @@
 Replication package of Continuous Integration and Software Quality: A Causal Explanatory Study
 
 For MSR replication in the step 4, we provide a docker infrastructure to provide the correct environment for replication.
-This may use aproximately 10GB of your disc.
+This may use aproximately 15GB of your disc.
 
 
 ## Replication Instructions
@@ -41,7 +41,7 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
     - This folder contains python notebooks (Jupyter) with scripts to mine the repositories.
   - INSTRUCTIONS TO ACCESS DATA AND NOTEBOOKS:
     - You need to have Docker installed in your machine.
-    - (These docker containers instantiation may use aproximately 10GB of your disc.)
+    - (These docker containers instantiation may use aproximately 15GB of your disc.)
 
   - FOR DATABASE INSTANTIATION:
     - Open Terminal into repository root folder.
