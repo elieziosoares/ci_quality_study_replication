@@ -9,7 +9,7 @@ This may use aproximately 15GB of your disc.
 The methodology is organizazed in 7 steps. Below we present instructions for each step:
 
 #### 1- Literature Survey
-  - "Relication/1-Literature Survey/Literature Survey.ods"
+  - "1-Literature Survey/Literature Survey.ods"
     - File containing literature claims and its references.
     - The last three sheets contain a summary of associations.
 
@@ -18,23 +18,24 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
 #### 2- General Causal DAG
   - Tool to model causal DAGs: http://dagitty.net/
     - This tool allows us to draw causal DAGs and point out the minimal adjustment set, as well the conditional independencies implication (to test statistically). Therefore, this tool makes the job easier and faster (It is possible to use the dagitty R package to the same functionalities).
+
   - General Model with bugs extratified:
-    - "Relication/2-General DAG/1-model_ci_bugs_extratified.pdf"
+    - "2-General DAG/1-model_ci_bugs_extratified.pdf"
   - Tests - Bugs associations:
-    - "Relication/2-General DAG/2-model_tests_bugs.pdf"
+    - "2-General DAG/2-model_tests_bugs.pdf"
   - Build attributes - Bugs Associations:
-    - "Relication/2-General DAG/3-model_build_bugs.pdf"
+    - "2-General DAG/3-model_build_bugs.pdf"
   - Unified DAG
-    - "Relication/2-General DAG/4-model_Unified_General.pdf
+    - "2-General DAG/4-model_Unified_General.pdf
   - Unified Dag cleaned into CI (Unified Dag with automated tests, time to fix, build health, integration frequency represented inside CI).
-    - "Relication/2-General DAG/5-model_Unified_General_CIsimplified.pdf"
+    - "2-General DAG/5-model_Unified_General_CIsimplified.pdf"
 
 
 #### 3- Variable Cleaning and Bias Identification
   - Causal DAG cleaned on variables of interest.
-    - "Relication/3-Causal DAG-Cleaned/1-model_Causal_Literature.pdf"
+    - "3-Causal DAG-Cleaned/1-model_Causal_Literature.pdf"
   - Causal DAG with Age variable
-    - "Relication/3-Causal DAG-Cleaned/2-model_Causal_Literature_Age.pdf"
+    - "3-Causal DAG-Cleaned/2-model_Causal_Literature_Age.pdf"
   
 #### 4- Mining Software Repositories (MSR)
   - "4-MSR/..."
@@ -75,7 +76,7 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
         
 #### 5- Data-Driven DAG Evaluation
   - R file to run (un)conditional independencies tests:
-    - "Replication/5-Data-Driven_Evaluation.R"
+    - "5-Data-Driven_Evaluation/dcov-KCI_tests_data-theory_v6.R"
   
       
 
