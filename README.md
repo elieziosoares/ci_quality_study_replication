@@ -37,14 +37,14 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
     - "Relication/3-Causal DAG-Cleaned/2-model_Causal_Literature_Age.pdf"
   
 #### 4- Mining Software Repositories (MSR)
-  - "Relication/4-MSR/..."
+  - "4-MSR/..."
     - This folder contains python notebooks (Jupyter) with scripts to mine the repositories.
   - INSTRUCTIONS TO ACCESS DATA AND NOTEBOOKS:
     - You need to have Docker installed in your machine.
     - (These docker containers instantiation may use aproximately 10GB of your disc.)
 
   - FOR DATABASE INSTANTIATION:
-    - Open Terminal into this repository folder.
+    - Open Terminal into repository root folder.
     - Run the docker commands below IN THE FIRST USAGE:
       - docker image build -t study-db .
       - docker container run -it -p 5433:5432 --name study-db-server study-db
@@ -53,6 +53,21 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
       - docker container start -ai study-db-server  
       
     - Ready! A postgres instance is listening on http://localhost:5433
+
+  - FOR JUPYTER NOTEBOOKS INSTANTIATION:
+    - Open Terminal into DockerJupyter folder.
+    - Run the docker commands below IN THE FIRST USAGE:
+      - docker image build -t study-notebooks 4-MSR/Dockerfile
+      - docker run -d \
+          --name jupyterserver \
+          -p 8889:8888 \
+          -e JUPYTER_ENABLE_LAB=yes \
+          study-notebooks \
+          start-notebook.sh --NotebookApp.password='' --NotebookApp.token=''
+    - To use after first instantiation:
+      - docker container start -ai jupyterserver  
+
+    - Ready! A Jupyter Notebook server instance is listening on http://localhost:8889
 
 
   - To mine commit data, you need to run the repository tool below:
