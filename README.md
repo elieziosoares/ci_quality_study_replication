@@ -59,12 +59,8 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
     - Open Terminal into DockerJupyter folder.
     - Run the docker commands below IN THE FIRST USAGE:
       - docker image build -t study-notebooks 4-MSR/Dockerfile
-      - docker run -d \
-          --name jupyterserver \
-          -p 8889:8888 \
-          -e JUPYTER_ENABLE_LAB=yes \
-          study-notebooks \
-          start-notebook.sh --NotebookApp.password='' --NotebookApp.token=''
+      - docker run -d --name jupyterserver -p 8889:8888 -e JUPYTER_ENABLE_LAB=yes study-notebooks start-notebook.sh --NotebookApp.password='' --NotebookApp.token=''
+      
     - To use after first instantiation:
       - docker container start -ai jupyterserver  
 
