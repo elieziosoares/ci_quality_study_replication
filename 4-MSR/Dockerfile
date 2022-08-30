@@ -19,11 +19,3 @@ COPY psql_pwd.txt /home
 
 WORKDIR /home/jovyan/work/
 EXPOSE 8889
-
-
-docker run -d \
-    --name jupyterserver \
-    -p 8889:8888 \
-    -e JUPYTER_ENABLE_LAB=yes \
-    study-notebooks \
-    start-notebook.sh --NotebookApp.password='' --NotebookApp.token=''
