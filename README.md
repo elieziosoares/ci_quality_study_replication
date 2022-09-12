@@ -68,7 +68,7 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
 
 
   - To mine commit data, you need to run the repository tool below:
-    - https://anonymous.4open.science/r/PRCommitMiner/
+    - https://github.com/elieziosoares/PRCommitMiner
         
 #### 5- Data-Driven DAG Evaluation
   - R file to run (un)conditional independencies tests:
