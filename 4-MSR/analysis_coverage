@@ -1,0 +1,45 @@
+select repo_name from projects WHERE 
+(commits_mined IS TRUE and analysis_releases > 1 and analysis_issues > 0 and analysis_prs > 0 and qty_bugs_period > 0) 
+AND CI_SERVICE iLIKE 'TRAVIS CI'
+AND coverage > 0 AND BUILD_HEALTH > 0
+
+--14
+--17
+
+
+select repo_name, cov_service, coverage, BUILD_HEALTH, coverage_mined from projects WHERE 
+(commits_mined IS TRUE and analysis_releases > 1 and analysis_issues > 0 and analysis_prs > 0 and qty_bugs_period > 0) 
+AND CI_SERVICE iLIKE 'TRAVIS CI'
+--and cov_service is null and coverage_mined is true
+and cov_service is not null
+
+--92
+
+-- Quais projetos CI não estão sendo incluidos pelo coverage? 505
+-- Quais projetos CI não estão sendo incluidos pelo build_health? 314
+-- Quais projetos CI não estão sendo incluídos pelo cov E build_health? 530
+select P.repo_name,P.COV_SERVICE,P.sonar_id,P.coverage_mined,P.coverage,P.BUILD_HEALTH,P.analysis_init,P.analysis_finish,MIN(C.created),MAX(C.created) ,MIN(B.STARTED_AT),MAX(B.STARTED_AT) 
+from projects P INNER JOIN COVERAGE C ON C.repo_name = P.repo_name
+				INNER JOIN BUILDS_MINED B ON C.repo_name = P.repo_name
+WHERE (commits_mined IS TRUE and analysis_releases > 1 and analysis_issues > 0 and analysis_prs > 0 and qty_bugs_period > 0) 
+AND P.CI_SERVICE iLIKE 'TRAVIS CI'
+AND P.coverage = 0
+-- AND BUILD_HEALTH = 0
+--AND coverage > 0 AND BUILD_HEALTH > 0
+AND P.repo_name IN (select distinct repo_name from coverage)
+group by P.repo_name
+
+
+
+SELECT repo_name,COV_SERVICE,sonar_id,coverage From PROJECTS 
+    WHERE commits_mined2 IS TRUE and analysis_releases > 1 and analysis_issues > 0 and analysis_prs > 0 and qty_bugs_period > 0
+    AND (COV_SERVICE IN ('SONAR','BOTH') OR (LAST_BUILD IS NOT NULL AND COV_SERVICE ilike 'COVERALLS'))
+    AND coverage_mined is not True
+	
+select P.repo_name,P.analysis_init,P.analysis_finish,C.coverage,C.created from coverage C 
+inner join Projects P on C.repo_name = P.repo_name
+where P.repo_name ilike 'tensorflow/tfjs'
+order by C.created
+
+select coverage from coverage where (created BETWEEN '2017-08-01 00:00:00-03' AND '2018-09-01 00:00:00-03') 
+AND repo_name like 'tensorflow/tfjs';
