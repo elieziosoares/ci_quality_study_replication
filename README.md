@@ -66,13 +66,13 @@ The methodology is organizazed in 7 steps. Below we present instructions for eac
 
     - Ready! A Jupyter Notebook server instance is listening on http://localhost:8889
 
-
-  - To mine commit data, you need to run the repository tool below:
-    - https://github.com/elieziosoares/PRCommitMiner
         
 #### 5- Data-Driven DAG Evaluation
   - R file to run (un)conditional independencies tests:
     - "5-Data-Driven_Evaluation/dcov-KCI_tests_data-theory_v6.R"
   
-      
+
+#### (*) Database Dump
+  - If you desire download the database dump without use docker, you may access through the link below:
+  - https://drive.google.com/file/d/1wYBZ3ytDi3SB6cBJ8uZ5I7uxBfp3PVcd/view?usp=drive_link
 
