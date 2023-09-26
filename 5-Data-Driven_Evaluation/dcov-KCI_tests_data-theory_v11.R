@@ -35,7 +35,8 @@ bugs <- dbGetQuery(con, "SELECT bugs FROM METRICS_RELEASES where repo_name IN (s
 #commit frequency as commit_size
 commit_s <- dbGetQuery(con, "SELECT qty_commits commit_size FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
 #merge_c <- dbGetQuery(con, "SELECT merge_conflicts Merge_Conf FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
-merge_c <- dbGetQuery(con, "SELECT merge_conflicts_git Merge_Conf FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
+#merge_c <- dbGetQuery(con, "SELECT merge_conflicts_git Merge_Conf FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
+merge_c <- dbGetQuery(con, "SELECT merge_conflicts_gitv2 Merge_Conf FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
 communication <- dbGetQuery(con, "SELECT communication_mean Communication FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
 test_v <- dbGetQuery(con, "SELECT test_volume_proportional test_vol FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
 age <- dbGetQuery(con, "SELECT age FROM METRICS_RELEASES where repo_name IN (select repo_name from projects where rq1_included is true) ORDER BY REPO_NAME,created_at asc")
@@ -89,7 +90,7 @@ dfa <- data.frame(ci,commit_s)
 dfa[is.na(dfa)]=0
 CondIndTest(df$age,df$communication,dfa, method = "KCI")
 
-#Age ⊥ Merge_Conflicts | Commit_Size, Continuous_Integration                                        0.2696356 
+#Age ⊥ Merge_Conflicts | Commit_Size, Continuous_Integration                                        0.2696356 / 0.2685542
 dfa <- data.frame(ci,commit_s)
 dfa[is.na(dfa)]=0
 CondIndTest(df$age,df$merge_conf,dfa, method = "KCI")
@@ -99,17 +100,17 @@ dfa <- data.frame(ci,communication,test_v,age)
 dfa[is.na(dfa)]=0
 CondIndTest(df$commit_size,df$bugs,dfa, method = "KCI")
 
-#Bug_Report ⊥ Merge_Conflicts | Commit_Size, Continuous_Integration                               0.3245861  
+#Bug_Report ⊥ Merge_Conflicts | Commit_Size, Continuous_Integration                               0.3245861  / 0.3214752
 dfa <- data.frame(ci,commit_s)
 dfa[is.na(dfa)]=0
 CondIndTest(df$bugs,df$merge_conf,dfa, method = "KCI")
 
-#Bug_Report ⊥ Merge_Conflicts | Age, Communication, Continuous_Integration, Tests_Volume            0.3633449
+#Bug_Report ⊥ Merge_Conflicts | Age, Communication, Continuous_Integration, Tests_Volume            0.3633449 / 0.344638
 dfa <- data.frame(age,communication,ci,test_v)
 dfa[is.na(dfa)]=0
 CondIndTest(df$bugs,df$merge_conf,dfa, method = "KCI")
 
-#Communication ⊥ Merge_Conflicts | Commit_Size, Continuous_Integration                              0.4865323
+#Communication ⊥ Merge_Conflicts | Commit_Size, Continuous_Integration                              0.4865323 / 0.3262914
 dfa <- data.frame(commit_s,ci)
 dfa[is.na(dfa)]=0
 CondIndTest(df$communication,df$merge_conf,dfa, method = "KCI")
@@ -117,12 +118,33 @@ CondIndTest(df$communication,df$merge_conf,dfa, method = "KCI")
 #Continuous_Integration ⊥ Tests_Volume | Commit_Size                                                3.463896e-14
 CondIndTest(df$ci,df$test_vol,df$commit_size, method = "KCI")
 
-#Merge_Conflicts ⊥ Tests_Volume | Commit_Size                                                       0.5421594
+#Merge_Conflicts ⊥ Tests_Volume | Commit_Size                                                       0.5421594 / 0.3253614
 CondIndTest(df$merge_conf,df$test_vol,df$commit_size, method = "KCI")
 
+#########################################
+dfa <- data.frame(commit_s,age)
+dfa[is.na(dfa)]=0
+CondIndTest(df$ci,df$test_vol,dfa, method = "KCI")                 #0.6980125
+
+dfa <- data.frame(commit_s,age)
+dfa[is.na(dfa)]=0
+CondIndTest(df$merge_conf,df$test_vol,dfa, method = "KCI")         #0.4486179
+
+dfa <- data.frame(commit_s,ci)
+dfa[is.na(dfa)]=0
+CondIndTest(df$merge_conf,df$test_vol,dfa, method = "KCI")         #0.384515
+
+####
+dfa <- data.frame(commit_s,age)
+dfa[is.na(dfa)]=0
+CondIndTest(df$ci,df$test_vol,dfa, method = "KCI")                 #0.6980125
+
+dfa <- data.frame(commit_s,age)
+dfa[is.na(dfa)]=0
+CondIndTest(df$merge_conf,df$test_vol,dfa, method = "KCI")         #0.4486179
 
 
-
+#######################################
 
 #####################################################
 ##  Literature-driven Model - Failed Hypothesis
@@ -149,12 +171,18 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
       #Even conditioning by Commit_frequency (0)
       #and CI+Commit_frequency, the variables AGE and TEST VOLUME remains dependent  (1.068682e-08)
       #Without conditioning, they are dependent (4.308763)
+      #Even conditioning by bug reports (0)
+      #Even conditioning by merge conflicts
       CondIndTest(df$age,df$test_vol,df$ci, method = "KCI")   #2.395195e-12  DEPENDENT
       CondIndTest(df$age,df$test_vol,df$commit_size, method = "KCI")   #0  DEPENDENT
       
       dfa <- data.frame(ci,commit_s)
       dfa[is.na(dfa)]=0
       CondIndTest(df$age,df$test_vol,dfa, method = "KCI")   #1.37973e-11  DEPENDENT
+      
+      CondIndTest(df$age,df$test_vol,df$bugs, method = "KCI")   #0 DEPENDENT
+      CondIndTest(df$age,df$test_vol,df$merge_conf, method = "KCI")   #0  DEPENDENT
+
       
 
       
@@ -164,8 +192,11 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
       CondIndTest(df$age,df$communication,dfa, method = "KCI")  #0.0001035991
       CondIndTest(df$age,df$communication,df$ci, method = "KCI")  #1.162458e-06
       
+      CondIndTest(df$age,df$communication,df$bugs, method = "KCI")  #0
+      
       # ADDING AGE -> COMMUNICATION
       # Even conditioning by CI and Commit_frequency size, the variables remains dependent
+      # Even conditioning by bug reports the variables remains dependent
       # without conditioning, they are dependent  ()
       dcov.test(df$age,df$communication,R=200)  #11.86268
 
@@ -183,6 +214,22 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
       dfa[is.na(dfa)]=0
       CondIndTest(df$commit_size,df$bugs,dfa, method = "KCI")       #0
       
+      dfa <- data.frame(ci,communication)
+      dfa[is.na(dfa)]=0
+      CondIndTest(df$commit_size,df$bugs,dfa, method = "KCI")       #0
+      
+      dfa <- data.frame(ci,test_v)
+      dfa[is.na(dfa)]=0
+      CondIndTest(df$commit_size,df$bugs,dfa, method = "KCI")       #0
+      
+      dfa <- data.frame(communication,test_v)
+      dfa[is.na(dfa)]=0
+      CondIndTest(df$commit_size,df$bugs,dfa, method = "KCI")       #0
+      
+      CondIndTest(df$commit_size,df$bugs,df$ci, method = "KCI")       #
+      CondIndTest(df$commit_size,df$bugs,df$communication, method = "KCI")       #
+      
+      
       dcov.test(df$bugs,df$commit_size,R=200)                       #6.009902
       
       
@@ -197,6 +244,7 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
     dcov.test(df$test_vol,df$ci,R=200)  #0.1128856  independent
 
     dcov.test(df$communication,df$test_vol,R=200)  #0.1128856  independent
+    
 
   
   
@@ -207,17 +255,17 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
 ## KCI  p > 0.05 - independent
 #####################################################
 
-#H1	Age ⊥ Merge_Conflicts | Commit_Frequency, Continuous_Integration                        #0.2696356
+#H1	Age ⊥ Merge_Conflicts | Commit_Frequency, Continuous_Integration                        #0.2696356 / 0.2685542
     dfa <- data.frame(ci,commit_s)
     dfa[is.na(dfa)]=0
     CondIndTest(df$age,df$merge_conf,dfa, method = "KCI")
 
-#H2	Bug_Report ⊥ Merge_Conflicts | Commit_Frequency, Continuous_Integration                 #0.3213383
+#H2	Bug_Report ⊥ Merge_Conflicts | Commit_Frequency, Continuous_Integration                 #0.3213383 / 0.3175822
     dfa <- data.frame(commit_s,ci)
     dfa[is.na(dfa)]=0
     CondIndTest(df$bugs,df$merge_conf,dfa, method = "KCI")
     
-#H3	Communication ⊥ Merge_Conflicts | Commit_Frequency, Continuous_Integration              #0.4865323
+#H3	Communication ⊥ Merge_Conflicts | Commit_Frequency, Continuous_Integration              #0.4865323 / 0.3262914
     dfa <- data.frame(commit_s,ci)
     dfa[is.na(dfa)]=0
     CondIndTest(df$communication,df$merge_conf,dfa, method = "KCI")
@@ -231,7 +279,7 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
     
     dhsic(df$communication,df$test_vol,kernel=c("gaussian","discrete"))$dHSIC
     
-#H6	Merge_Conflicts ⊥ Tests_Volume | Commit_Frequency, Continuous_Integration               #0.384515
+#H6	Merge_Conflicts ⊥ Tests_Volume | Commit_Frequency, Continuous_Integration               #0.384515 / 0.2465839
     dfa <- data.frame(commit_s,ci)
     dfa[is.na(dfa)]=0
     CondIndTest(df$merge_conf,df$test_vol,dfa, method = "KCI")
@@ -249,10 +297,14 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
 #H4	Communication ⊥ Tests_Volume | Age
     
     #Add an edge from Tests_Volume to Communication
+    # Even conditioning by merge_conf, the variables remains dependent  0
+    # Even conditioning by ci,merge_conf the variables remains dependent
+    CondIndTest(df$test_vol,df$age,df$merge_conf, method = "KCI")           #0
+    CondIndTest(df$test_vol,df$age,df$commit_size, method = "KCI")          #0
     
-    
-    
-    
+    dfa <- data.frame(merge_c,ci)
+    dfa[is.na(dfa)]=0
+    CondIndTest(df$test_vol,df$age,dfa, method = "KCI")                     #1.698047e-08
     
     
     
@@ -264,9 +316,42 @@ dcov.test(df$age,df$commit_size,R=200)    #49.5566
   t.test(df$commit_size[df$ci==0],df$commit_size[df$ci==1])
   t.test(df$age[df$ci==0],df$age[df$ci==1])
   t.test(df$bugs[df$ci==0],df$bugs[df$ci==1])
+  t.test(df$test_vol[df$ci==0],df$test_vol[df$ci==1])
  
   res <- cor.test(df$age, df$bugs, method = c("pearson"))
   res
+  res <- cor.test(df$age, df$test_vol, method = c("pearson"))
+  res
   res <- cor.test(df$communication, df$bugs, method = c("pearson"))
   res
-     
+  res <- cor.test(df$commit_size, df$bugs, method = c("pearson"))
+  res
+  res <- cor.test(df$age, df$communication, method = c("pearson"))
+  res 
+  cor.test(df$age, df$commit_size, method = c("pearson"))
+  res 
+  
+  # Calcular a correlação de Spearman
+  cor.test(df$age, df$commit_size, method = "spearman")
+  cor.test(df$age, df$commit_size.1, method = "spearman")
+  cor.test(df$age, df$test_vol, method = "spearman")
+  cor.test(df$age, df$communication, method = "spearman")
+  cor.test(df$ci, df$communication, method = "spearman")
+  cor.test(df$bugs, df$commit_size, method = "spearman")
+  cor.test(df$communication, df$bugs, method = "spearman")
+  
+  
+  # Instalar a biblioteca corrplot se ainda não estiver instalada
+  install.packages("corrplot")
+  
+  # Carregar a biblioteca corrplot
+  library(corrplot)
+  
+  # Calcular a matriz de correlação
+  matriz_correlacao <- cor(df)
+  # Plotar a matriz de correlação
+  corrplot(matriz_correlacao, method = "circle")
+  
+  
+  commit_size
+  df$age
